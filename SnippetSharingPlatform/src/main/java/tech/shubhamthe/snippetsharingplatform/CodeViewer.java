@@ -1,6 +1,5 @@
 package tech.shubhamthe.snippetsharingplatform;
 import org.json.JSONObject;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -8,9 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
@@ -23,47 +20,46 @@ public class CodeViewer {
     protected ResponseEntity<String> landingPage() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Content-Type", "text/html");
-        String htmlFileContent = "";
-        try {
-            File resource = new ClassPathResource("template/index.html").getFile();
-            htmlFileContent = new String(Files.readAllBytes(resource.toPath()));
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         return ResponseEntity.ok()
                 .headers(httpHeaders)
-                .body(htmlFileContent);
+                .body(requestedHTMLFiles("index.html"));
     }
 
 
     // Return Code Based on UUID if it is correct else Return 404 Not found @Get
     protected ResponseEntity<String> getNthCode(@PathVariable String uuidForCode) {
+        String htmlFileContent = "";
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Content-Type", "text/html");
-        if(!uuid.containsKey(uuidForCode)) {
+
+        if (uuid.containsKey(uuidForCode)) {
+            Code code = uuid.get(uuidForCode);
+            if (code.checkVisibility()) {
+
+
+                htmlFileContent = requestedHTMLFiles("viewer.html");
+                String divValue = addDiv(code.getCode(), code.getDate(), code.getViewer(), code.getDestructTime());
+                htmlFileContent = htmlFileContent.replace("{content}", divValue);
+                code.setViewer(code.getViewer() - 1);
+
+
+            } else {
+                uuid.remove(uuidForCode);
+                return ResponseEntity.badRequest()
+                        .headers(httpHeaders)
+                        .body(requestedHTMLFiles("404.html"));
+            }
+        } else {
             return ResponseEntity.badRequest()
                     .headers(httpHeaders)
-                    .body(new HTMLLoader().htmlFileLoader("404.html"));
+                    .body(requestedHTMLFiles("404.html"));
         }
-        Code code = uuid.get(uuidForCode);
-        if(code.checkVisibility()) {
-            uuid.remove(uuidForCode);
-            return ResponseEntity.ok()
-                    .headers(httpHeaders)
-                    .body(new HTMLLoader().htmlFileLoader("404.html"));
-        }
-        String htmlFileContent = "";
-
-            htmlFileContent = new HTMLLoader().htmlFileLoader("viewer.html");
-            String divValue =  addDiv(code.getCode(), code.getDate(), code.getViewer(), code.getDestructTime());
-            htmlFileContent = htmlFileContent.replace("{content}",divValue);
-            code.setViewer(code.getViewer() - 1);
-
         return ResponseEntity.ok()
                 .headers(httpHeaders)
                 .body(htmlFileContent);
     }
+
 
 
     // Creates and Return New API for the new code snippet created @Post
@@ -92,10 +88,9 @@ public class CodeViewer {
     protected ResponseEntity<String> submitNewCode() {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Content-Type", "text/html");
-        String htmlFileContent = new HTMLLoader().htmlFileLoader("userInput.html");
         return ResponseEntity.ok()
                 .headers(responseHeaders)
-                .body(htmlFileContent);
+                .body(requestedHTMLFiles("userInput.html"));
     }
 
 
@@ -118,17 +113,29 @@ public class CodeViewer {
                 "    </div>\n" +
                 "</div>\n\n", date ,view,tillTime, code);
     }
+
     private String getApiN(String code, String date) {
         return String.format("\n   {\n" +
                 "        \"code\": \"%s\",\n" +
                 "        \"date\": \"%s\"\n" +
                 "    },", code, date );
     }
+
     private String generateUUID() {
         UUID uuid = UUID.randomUUID();
         return uuid.toString();
     }
 
+
+
+    private String requestedHTMLFiles(String htmlFileName) {
+
+        String htmlFileContent = HTMLLoader.contentOfBaseHTMLFile;
+        String landing = HTMLLoader.htmlFileLoader(htmlFileName);
+        htmlFileContent = htmlFileContent.replace("{replace}",landing );
+
+        return htmlFileContent;
+    }
 
 }
 

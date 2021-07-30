@@ -74,7 +74,7 @@ public class Code {
      */
     public boolean checkVisibility() {
         LocalDateTime now = LocalDateTime.now();
-        return !(this.viewer != 0 && !now.isAfter(this.destructTime));
+        return (this.viewer != 0 && !now.isAfter(this.destructTime));
     }
 
 }

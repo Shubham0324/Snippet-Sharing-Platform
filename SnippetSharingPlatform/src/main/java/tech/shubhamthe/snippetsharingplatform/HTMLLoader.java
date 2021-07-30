@@ -1,15 +1,16 @@
 package tech.shubhamthe.snippetsharingplatform;
 
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Controller;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-@Controller
 public class HTMLLoader {
-    protected String htmlFileLoader(String htmlFileName) {
+    public static final String  contentOfBaseHTMLFile = HTMLLoader.htmlFileLoader("base.html");
+
+    protected static String htmlFileLoader(String htmlFileName) {
+
         String htmlFileContent = "";
         try {
             File resource = new ClassPathResource("template/" + htmlFileName).getFile();
@@ -23,11 +24,12 @@ public class HTMLLoader {
 
 
     protected String htmlFileEditor(String uuid, String views, String time) {
-        String htmlFileContent = htmlFileLoader("confirm.html");
-        htmlFileContent = htmlFileContent.replace("{uuid}", uuid);
-        htmlFileContent = htmlFileContent.replace("{uuid}", uuid);
-        htmlFileContent = htmlFileContent.replace("{times}", views);
-        htmlFileContent = htmlFileContent.replace("{seconds}", time);
-        return htmlFileContent;
+        String finalHTMLFile = contentOfBaseHTMLFile;
+        String confirmHTMLFile = htmlFileLoader("confirm.html");
+        finalHTMLFile = finalHTMLFile.replace("{replace}",confirmHTMLFile);
+        finalHTMLFile = finalHTMLFile.replace("{uuid}", uuid);
+        finalHTMLFile = finalHTMLFile.replace("{times}", views);
+        finalHTMLFile = finalHTMLFile.replace("{seconds}", time);
+        return finalHTMLFile;
     }
 }
