@@ -1,15 +1,59 @@
 
-<h1>Your Online Snippet Sharing Platform</h1>
-<h2 style="margin: 0">Snippet : </h2>
-<textarea id="code_snippet" placeholder="Paste your code snippet here"
-          required="required" title="Snippet Fields" rows="10" cols="107" >
-</textarea><br>
-<textarea id="time_restriction" placeholder="Input value in seconds code will be visible"
-          required="required" title="Seconds Filed" rows="5" cols="50">
-</textarea>
-<textarea id="views_restriction" placeholder="Input How many times total view you snippet can have"
-          required="required" title="Views Field" rows="5" cols="50">
-</textarea>
-<br>
-<button id="send_snippet" type="submit" onclick="send()">Submit</button>
+<h1 style="margin: auto;text-align: center;">Your Online Snippet Sharing Platform</h1>
+
+
+<div class="form" style="margin: 1vh;">
+
+    <form id="myForm">
+
+        <div class="form-fields">
+            <label>Authors Name :
+                <input type="text" id="name" required minLength="3" placeholder="John Doe"/>
+            </label>
+        </div>
+        <div class="form-fields">
+            <label> Email :
+                <input type="email" id="email" required minLength="5" placeholder="author.name@provider.com"/>
+            </label>
+        </div>
+
+        <div class="form-fields">
+            <label> What are you sharing :
+                <select name="status" required>
+                    <option value="">--Category of Snippets--</option>
+                    <option value="code" >Code</option>
+                    <option value="arts">Literature</option>
+                    <option value="idea">Thuoghts/Idea Validation</option>
+                    <option value="political">Political</option>
+                    <option value="other">other</option>
+                </select>
+            </label>
+        </div>
+        <div class="form-fields">
+            <label> Password :
+                <input type="password" id="password" required minLength="8" placeholder="Password"/>
+            </label>
+        </div>
+        <div class="snippet">
+            <h2 style="margin: 0">Snippet : </h2>
+            <textarea id="Snippet" required placeholder="In life there are people that will hurt us and cause us pain,
+            but we must learn to forgive and forget and not hold grudges. In life there are mistakes we will make" title="Views Field" rows="5" cols="50">
+            </textarea>
+        </div>
+        <div class="form-fields">
+            <label> Number of maximum views allowed :
+                <input type="number" min="1" id="view" required minLength="5" placeholder="10"/>
+            </label>
+        </div>
+
+        <div className="form-fields">
+            <label> Maximum time to keep in server (in seconds) :
+                <input type="number" min="60" id="time" required minLength="5" placeholder="500"/>
+            </label>
+        </div>
+
+        <button onclick="send()">Submit</button>
+
+    </form>
+</div>
 <script src="/js/script.js"></script>

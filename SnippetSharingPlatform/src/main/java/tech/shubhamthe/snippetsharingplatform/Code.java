@@ -11,10 +11,15 @@ import java.time.format.DateTimeFormatter;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Code {
+    /*
+    Authors of respective snippet are saved in following variables
+     */
+    private String name;
+    private String email;
+    private String pass;
 
     // Following String hold code snippet for particular Code object
     private String code;
-  //  private String password;
 
     // Following LocalDateTime hold code creation date for particular Code object
     private LocalDateTime date = LocalDateTime.now();
@@ -25,27 +30,29 @@ public class Code {
     private int viewer;
     private LocalDateTime destructTime = LocalDateTime.now();
 
+    /*Genre of snippet
+
+     */
+
+    private String genre;
+
     // TO print date and time in nice pattern (passed)
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 
-    // Code is executed when no source code is provided
-    Code() {
-        // Default value
-        this.code = "My Life My Rules";
-        // Save time and date of when new Code is created
-        this.date = LocalDateTime.now().withNano(0);
-    }
 
     /*
     Constructor is called when send() function pass
     JSON to api/code/new and we call it by passing key
     values new Code(key1, key2, key3)
      */
-    Code(String code, int time, int views/* String password*/) {
+    Code(String name, String email, String pass, String code, int time, int views, String genre ) {
+        this.name = name;
+        this.email = email;
+        this.pass = pass;
         this.code = code;
         this.viewer = views;
         this.destructTime = this.date.plusSeconds(time);
-     //   this.password = password;
+        this.genre = genre;
     }
 
     //GETTERS

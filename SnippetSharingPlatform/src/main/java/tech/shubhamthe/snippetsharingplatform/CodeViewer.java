@@ -64,13 +64,20 @@ public class CodeViewer {
 
     // Creates and Return New API for the new code snippet created @Post
     // Here uuid is created and is stored in LinkedHashMap called uuid
-    protected ResponseEntity<String> getApiCodeNew(@RequestBody String code){
+    protected ResponseEntity<String> getApiCodeNew(@RequestBody String snippetObject){
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Content-Type", "application/json");
+
         Code code1 = new Code(
-                new JSONObject(code).getString("code"),
-                Integer.parseInt(new JSONObject(code).getString("time")),
-                Integer.parseInt(new JSONObject(code).getString("views")));
+                new JSONObject(snippetObject).getString("name"),
+                new JSONObject(snippetObject).getString("email"),
+                new JSONObject(snippetObject).getString("pass"),
+                new JSONObject(snippetObject).getString("code"),
+                Integer.parseInt(new JSONObject(snippetObject).getString("time")),
+                Integer.parseInt(new JSONObject(snippetObject).getString("views")),
+                new JSONObject(snippetObject).getString("type"));
+
+
         // UUID Generation
         String UUID = generateUUID();
         uuid.put(UUID, code1); //USED Predefined for testing purpose
@@ -126,7 +133,12 @@ public class CodeViewer {
         return uuid.toString();
     }
 
-
+    @GetMapping(value = "/error" , produces = "text/html")
+    public ResponseEntity<String> err(){
+        return ResponseEntity.badRequest()
+                .header("Content-Type", "text/html")
+                .body(requestedHTMLFiles("404.html"));
+    }
 
     private String requestedHTMLFiles(String htmlFileName) {
 
