@@ -1,5 +1,6 @@
-package tech.shubhamthe.snippetsharingplatform;
+package tech.shubhamthe.snippetsharingplatform.applicationprocesses;
 
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -7,17 +8,25 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import tech.shubhamthe.snippetsharingplatform.SnippetSharingPlatformApplication;
+import tech.shubhamthe.snippetsharingplatform.applicationprocesses.crudoperations.getrequests.GetMethodsCommClass;
+import tech.shubhamthe.snippetsharingplatform.applicationprocesses.crudoperations.postrequest.PostMethodsCommClass;
+import tech.shubhamthe.snippetsharingplatform.structure.Code;
 
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 @Controller
-public class PlatformController {
+@EnableAutoConfiguration
+public class PlatformController extends SnippetSharingPlatformApplication {
+
     ArrayList<Code> indexGet = new ArrayList<>();
-    LinkedHashMap<String, Code> uuid = new LinkedHashMap<>();
-    CodeViewer viewer = new CodeViewer();
+
+    GetMethodsCommClass viewer = new GetMethodsCommClass();
+
+    PostMethodsCommClass apiWorker = new PostMethodsCommClass();
+
 
 
 
@@ -36,11 +45,18 @@ public class PlatformController {
     }
 
 
+    // After Responding with status : 200 by ApiCodeNew().
+    // This method is called from userInput.html with the help of function showConfirmPage()
+    @GetMapping(value = "/code/confirm.html")
+    public ResponseEntity<String> showConfirmPage() {
+        return viewer.showConfirmPage();
+    }
     // Listen @localhost:8889/api/code/new which is called when send() func is triggered in UserInput.html
     // It calls viewer.getApiCodeNew which returns ResponseEntity<T>
     @PostMapping(value = "api/code/new", consumes = "application/json")
     public ResponseEntity<String> getApiCodeNew(@RequestBody String code){
-        return viewer.getApiCodeNew(code);
+
+        return apiWorker.getApiCodeNew(code);
     }
 
     // Helps User to create and store New code snippet

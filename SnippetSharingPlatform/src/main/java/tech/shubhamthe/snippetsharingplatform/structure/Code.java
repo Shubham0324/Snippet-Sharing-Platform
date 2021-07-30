@@ -1,4 +1,4 @@
-package tech.shubhamthe.snippetsharingplatform;
+package tech.shubhamthe.snippetsharingplatform.structure;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -45,7 +45,7 @@ public class Code {
     JSON to api/code/new and we call it by passing key
     values new Code(key1, key2, key3)
      */
-    Code(String name, String email, String pass, String code, int time, int views, String genre ) {
+     public Code(String name, String email, String pass, String code, int time, int views, String genre ) {
         this.name = name;
         this.email = email;
         this.pass = pass;
@@ -56,6 +56,10 @@ public class Code {
     }
 
     //GETTERS
+
+    public String getName() {
+        return name;
+    }
     public String getDate() {
         return this.date.format(FORMATTER);
     }
@@ -67,6 +71,9 @@ public class Code {
     }
     public String getDestructTime() {
         return  this.destructTime.format(FORMATTER);
+    }
+    public String getGenre() {
+        return genre;
     }
 
     // SETTERS

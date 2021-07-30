@@ -1,4 +1,4 @@
-package tech.shubhamthe.snippetsharingplatform;
+package tech.shubhamthe.snippetsharingplatform.structure;
 
 import org.springframework.core.io.ClassPathResource;
 
@@ -23,7 +23,7 @@ public class HTMLLoader {
     }
 
 
-    protected String htmlFileEditor(String uuid, String views, String time) {
+    protected static String confirmMsgEditor(String uuid, String views, String time) {
         String finalHTMLFile = contentOfBaseHTMLFile;
         String confirmHTMLFile = htmlFileLoader("confirm.html");
         finalHTMLFile = finalHTMLFile.replace("{replace}",confirmHTMLFile);
