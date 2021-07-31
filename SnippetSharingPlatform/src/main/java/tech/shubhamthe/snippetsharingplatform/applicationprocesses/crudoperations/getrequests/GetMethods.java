@@ -2,8 +2,6 @@ package tech.shubhamthe.snippetsharingplatform.applicationprocesses.crudoperatio
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import tech.shubhamthe.snippetsharingplatform.SnippetSharingPlatformApplication;
 import tech.shubhamthe.snippetsharingplatform.structure.Code;
 import tech.shubhamthe.snippetsharingplatform.structure.HTMLLoader;
@@ -50,7 +48,6 @@ public class GetMethods extends SnippetSharingPlatformApplication {
             Code code = uuid.get(uuidForCode);
             if (code.checkVisibility()) {
 
-                System.out.println("Here1");
                 htmlFileContent = requestedHTMLFiles("viewer.html");
                 String divValue = addDiv(code.getCode(), code.getDate(), code.getViewer(), code.getDestructTime(), code.getName(), code.getGenre());
                 htmlFileContent = htmlFileContent.replace("{content}", divValue);
@@ -58,21 +55,48 @@ public class GetMethods extends SnippetSharingPlatformApplication {
 
 
             } else {
-                System.out.println("Here2");
                 uuid.remove(uuidForCode);
                 return ResponseEntity.badRequest()
                         .headers(httpHeaders)
                         .body(requestedHTMLFiles("404.html"));
             }
         } else {
-            System.out.println("Here3");
             return ResponseEntity.badRequest()
                     .headers(httpHeaders)
                     .body(requestedHTMLFiles("404.html"));
         }
-        System.out.println("Here4");
         return ResponseEntity.ok()
                 .headers(httpHeaders)
+                .body(htmlFileContent);
+    }
+
+
+
+    public ResponseEntity<String> getRandomLatest(){
+        if(uuid.size() == 0) {
+            return ResponseEntity.badRequest()
+                    .header("Content-Type", "text/html")
+                    .body("We currently does not have Any Public Code Available");
+        }
+
+        StringBuilder returnable = new StringBuilder("");
+        String htmlFileContent = "";
+            htmlFileContent = requestedHTMLFiles("viewer.html");
+            int itr = 0;
+            for(Code values : uuid.values()) {
+                if (itr < 10) {
+                    returnable.append(addDiv(values.getCode(), values.getDate(), values.getViewer(), values.getDestructTime(), values.getName(), values.getGenre()));
+                    values.setViewer(values.getViewer() - 1);
+                    itr++;
+                } else {
+                    break;
+                }
+            }
+            htmlFileContent = htmlFileContent.replace("{content}", returnable);
+
+
+        return ResponseEntity.ok()
+                .header("Content-Type", "text/html")
                 .body(htmlFileContent);
     }
 
@@ -97,13 +121,13 @@ public class GetMethods extends SnippetSharingPlatformApplication {
     private String requestedHTMLFiles(String htmlFileName) {
 
         String htmlFileContent = HTMLLoader.contentOfBaseHTMLFile;
-        String landing = HtmlCommClass.htmlFileLoaderCommMethod(htmlFileName);
+        String landing = HtmlCommClass.htmlFileLoader(htmlFileName);
         htmlFileContent = htmlFileContent.replace("{replace}",landing );
 
         return htmlFileContent;
     }
 
-    public ResponseEntity<String> err(){
+    protected ResponseEntity<String> err(){
         return ResponseEntity.badRequest()
                 .header("Content-Type", "text/html")
                 .body(requestedHTMLFiles("404.html"));

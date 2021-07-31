@@ -3,42 +3,44 @@ package tech.shubhamthe.snippetsharingplatform.applicationprocesses.crudoperatio
 import org.json.JSONObject;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
+
 import tech.shubhamthe.snippetsharingplatform.SnippetSharingPlatformApplication;
+import tech.shubhamthe.snippetsharingplatform.exception.ApplicationFailed;
 import tech.shubhamthe.snippetsharingplatform.structure.Code;
 import tech.shubhamthe.snippetsharingplatform.structure.HtmlCommClass;
 
+import java.io.*;
 import java.util.UUID;
 
-public class PostMethods extends SnippetSharingPlatformApplication {
+public class PostMethods extends SnippetSharingPlatformApplication implements Serializable {
 
     // Creates and Return New API for the new code snippet created @Post
     // Here uuid is created and is stored in LinkedHashMap called uuid
-    protected ResponseEntity<String> getApiCodeNew( String snippetObject){
+    protected ResponseEntity<String> getApiCodeNew( String snippetObject) throws ApplicationFailed {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Content-Type", "application/json");
 
         Code code1 = new Code(
-                new JSONObject(snippetObject).getString("name"),
-                new JSONObject(snippetObject).getString("email"),
-                new JSONObject(snippetObject).getString("pass"),
-                new JSONObject(snippetObject).getString("code"),
-                Integer.parseInt(new JSONObject(snippetObject).getString("time")),
-                Integer.parseInt(new JSONObject(snippetObject).getString("views")),
-                new JSONObject(snippetObject).getString("type"));
+                new JSONObject(snippetObject).getString("name").trim(),
+                new JSONObject(snippetObject).getString("email").trim(),
+                new JSONObject(snippetObject).getString("pass").trim(),
+                new JSONObject(snippetObject).getString("code").trim(),
+                Integer.parseInt(new JSONObject(snippetObject).getString("time").trim()),
+                Integer.parseInt(new JSONObject(snippetObject).getString("views").trim()),
+                new JSONObject(snippetObject).getString("type").trim());
 
 
         // UUID Generation
         String UUID = generateUUID();
         uuid.put(UUID, code1);
-        latest = HtmlCommClass.confirmMsgEditorCommMethod(UUID, String.valueOf(code1.getViewer()), code1.getDestructTime());
-        //
+        latest = HtmlCommClass.confirmMsgEditor(UUID, String.valueOf(code1.getViewer()), code1.getDestructTime());
+
+        saveState();
+
         return ResponseEntity.ok()
                 .headers(responseHeaders)
                 .body(String.format("{ \"id\" : \"%s\"}", UUID));
     }
-
 
 
     private String generateUUID() {
@@ -51,5 +53,17 @@ public class PostMethods extends SnippetSharingPlatformApplication {
                 "        \"code\": \"%s\",\n" +
                 "        \"date\": \"%s\"\n" +
                 "    },", code, date );
+    }
+
+    private void saveState() throws ApplicationFailed {
+        try{
+            FileOutputStream fileOut = new FileOutputStream("database/database.txt");
+            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+            objectOut.writeObject(uuid);
+            objectOut.close();
+
+        }catch (IOException e){
+            System.out.println();
+        }
     }
 }

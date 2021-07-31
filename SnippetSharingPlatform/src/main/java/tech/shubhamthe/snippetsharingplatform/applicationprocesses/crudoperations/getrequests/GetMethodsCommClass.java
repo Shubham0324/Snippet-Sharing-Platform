@@ -1,8 +1,7 @@
 package tech.shubhamthe.snippetsharingplatform.applicationprocesses.crudoperations.getrequests;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
+
 
 public class GetMethodsCommClass extends GetMethods {
 
@@ -20,5 +19,13 @@ public class GetMethodsCommClass extends GetMethods {
 
     public ResponseEntity<String> getNthCode(String uuidForCode){
         return new GetMethods().getNthCode(uuidForCode);
+    }
+
+    public ResponseEntity<String> getRandomLatest() {
+        return new GetMethods().getRandomLatest();
+    }
+
+    public ResponseEntity<String> err(){
+        return new GetMethods().err();
     }
 }
