@@ -2,6 +2,9 @@ package tech.shubhamthe.snippetsharingplatform.applicationprocesses.crudoperatio
 
 import org.springframework.http.ResponseEntity;
 
+/**
+ * Communicating class to handle all communication between  GetMethods class and functions calling it
+ * */
 
 public class GetMethodsCommClass extends GetMethods {
 

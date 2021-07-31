@@ -13,26 +13,42 @@ import tech.shubhamthe.snippetsharingplatform.applicationprocesses.crudoperation
 import tech.shubhamthe.snippetsharingplatform.applicationprocesses.crudoperations.postrequest.PostMethodsCommClass;
 import tech.shubhamthe.snippetsharingplatform.exception.ApplicationFailed;
 
+/**
+* PlatformController class will listen to  any GET/POST request and will act according to mapping
+* provided above each function
+* Only public class user will interact directly
+* Contains method both for api's and html
+* */
 
-
+/**
+* his annotation serves as a specialization of @Component,
+* allowing for implementation classes to be autodetected through classpath scanning.
+* Implements all the basic features of a core spring framework like Inversion of Control, Dependency Injection*/
 @Controller
+/**
+ * Know more here https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/EnableAutoConfiguration.html
+ * */
 @EnableAutoConfiguration
 public class PlatformController extends SnippetSharingPlatformApplication {
 
-
+/*
+* Objects of respective public communicating class to call necessary methods when required
+* static as they are common for each process/object
+* */
     static GetMethodsCommClass viewer = new GetMethodsCommClass();
     static PostMethodsCommClass apiWorker = new PostMethodsCommClass();
     static GetApiMethodsCommClass apiRequester = new GetApiMethodsCommClass();
 
+/*
+* About  @GetMapping */
 
-
-    // Listen @localhost:8889 for the landing page call viewer.landingPage which returns ResponseEntity<T>
+    // Listen @localhost:8889 for the landing page call viewer.landingPage() which returns ResponseEntity<T> With status 200
     @GetMapping(value = "/" , produces = "text/html")
     public ResponseEntity<String> landingPage() {
        return viewer.landingPage();
     }
 
-    // Helps User to create and store New code snippet
+    // Helps User to create and store new snippet
     @GetMapping(value = "/code/new", produces = "text/html")
     public ResponseEntity<String> submitNewCode() {
         return viewer.submitNewCode();
@@ -55,7 +71,7 @@ public class PlatformController extends SnippetSharingPlatformApplication {
         return viewer.getNthCode(uuidForCode);
     }
 
-
+    //Returns 10 random latest snippet
     @GetMapping(value = "/code/latest", produces = "text/html")
     public ResponseEntity<String> getLatest() {
         return viewer.getRandomLatest();
@@ -64,7 +80,7 @@ public class PlatformController extends SnippetSharingPlatformApplication {
 
 
     // Listen @localhost:8889/api/code/new which is called when send() func is triggered in UserInput.html
-    // It calls viewer.getApiCodeNew which returns ResponseEntity<T>
+    // Helps in creating and saving data entered by user
     @PostMapping(value = "api/code/new", consumes = "application/json")
     public ResponseEntity<String> getApiCodeNew(@RequestBody String code) throws ApplicationFailed {
 
@@ -72,21 +88,22 @@ public class PlatformController extends SnippetSharingPlatformApplication {
     }
 
 
-
+    //Returns JSON form of snippet containing author nme, genre, date created, text
     @GetMapping(value = "/api/code/{uuid}")
     public ResponseEntity<String> getApiCodeNth(@PathVariable String uuid) {
 
         return apiRequester.getApiCodeNth(uuid);
     }
 
-
+    //Returns JSON form of 10 random snippet containing author nme, genre, date created, text
     @GetMapping(value = "/api/code/latest")
     public ResponseEntity<String> getApiCodeLatest(){
 
         return apiRequester.getApiRandomLatest();
     }
 
-
+    //Method is  triggered when there is mapping of the url entered by user
+    //  or when user try to visit snippet whose view count/time maximum limit is reached
     @GetMapping(value = "/code/error", produces = "text/html")
     public ResponseEntity<String> getNthCode() {
         return viewer.err();

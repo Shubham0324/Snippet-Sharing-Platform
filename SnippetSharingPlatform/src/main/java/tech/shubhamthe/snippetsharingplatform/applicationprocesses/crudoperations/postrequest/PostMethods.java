@@ -12,7 +12,10 @@ import tech.shubhamthe.snippetsharingplatform.structure.HtmlCommClass;
 import java.io.*;
 import java.util.UUID;
 
-public class PostMethods extends SnippetSharingPlatformApplication implements Serializable {
+/**
+ * Class to handle all post requests
+ **/
+class PostMethods extends SnippetSharingPlatformApplication implements Serializable {
 
     // Creates and Return New API for the new code snippet created @Post
     // Here uuid is created and is stored in LinkedHashMap called uuid
@@ -20,6 +23,8 @@ public class PostMethods extends SnippetSharingPlatformApplication implements Se
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Content-Type", "application/json");
 
+        //Class code constructor is called with arguments recieved via post request
+        // generated when user submit new snippet form
         Code code1 = new Code(
                 new JSONObject(snippetObject).getString("name").trim(),
                 new JSONObject(snippetObject).getString("email").trim(),
@@ -48,13 +53,8 @@ public class PostMethods extends SnippetSharingPlatformApplication implements Se
         return uuid.toString();
     }
 
-    protected String getApiN(String code, String date) {
-        return String.format("\n   {\n" +
-                "        \"code\": \"%s\",\n" +
-                "        \"date\": \"%s\"\n" +
-                "    },", code, date );
-    }
 
+    // Whenever uuid is updated a curren state of uuid is saved for storage and future purpose
     private void saveState() throws ApplicationFailed {
         try{
             FileOutputStream fileOut = new FileOutputStream("database/database.txt");

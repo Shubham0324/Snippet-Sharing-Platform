@@ -4,10 +4,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import tech.shubhamthe.snippetsharingplatform.SnippetSharingPlatformApplication;
 import tech.shubhamthe.snippetsharingplatform.structure.Code;
-import tech.shubhamthe.snippetsharingplatform.structure.HTMLLoader;
 import tech.shubhamthe.snippetsharingplatform.structure.HtmlCommClass;
 
-public class GetMethods extends SnippetSharingPlatformApplication {
+/**
+ * All the get request (non Api requests) functionality is handled by this class is protected
+ * and communication is handled by GetMethodsCommClass of the same  package
+ * */
+
+class GetMethods extends SnippetSharingPlatformApplication {
 
     // Return HTML with String as Landing Page Code @Get
     protected ResponseEntity<String> landingPage() {
@@ -31,7 +35,7 @@ public class GetMethods extends SnippetSharingPlatformApplication {
     }
 
 
-    public ResponseEntity<String> showConfirmPage() {
+    protected ResponseEntity<String> showConfirmPage() {
         return ResponseEntity.ok()
                 .header("Content-Type", "text/html")
                 .body(latest);//changes
@@ -72,7 +76,7 @@ public class GetMethods extends SnippetSharingPlatformApplication {
 
 
 
-    public ResponseEntity<String> getRandomLatest(){
+    protected ResponseEntity<String> getRandomLatest(){
         if(uuid.size() == 0) {
             return ResponseEntity.badRequest()
                     .header("Content-Type", "text/html")
@@ -100,6 +104,11 @@ public class GetMethods extends SnippetSharingPlatformApplication {
                 .body(htmlFileContent);
     }
 
+    protected ResponseEntity<String> err(){
+        return ResponseEntity.badRequest()
+                .header("Content-Type", "text/html")
+                .body(requestedHTMLFiles("404.html"));
+    }
 
 
     private String addDiv(String code, String date, int view, String tillTime, String name, String genre) {
@@ -120,17 +129,13 @@ public class GetMethods extends SnippetSharingPlatformApplication {
 
     private String requestedHTMLFiles(String htmlFileName) {
 
-        String htmlFileContent = HTMLLoader.contentOfBaseHTMLFile;
+        String htmlFileContent = HtmlCommClass.contentOfBaseHTMLFile;
         String landing = HtmlCommClass.htmlFileLoader(htmlFileName);
         htmlFileContent = htmlFileContent.replace("{replace}",landing );
 
         return htmlFileContent;
     }
 
-    protected ResponseEntity<String> err(){
-        return ResponseEntity.badRequest()
-                .header("Content-Type", "text/html")
-                .body(requestedHTMLFiles("404.html"));
-    }
+
 
 }

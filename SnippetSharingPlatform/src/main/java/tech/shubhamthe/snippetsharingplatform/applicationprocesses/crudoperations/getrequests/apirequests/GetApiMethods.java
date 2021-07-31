@@ -4,7 +4,12 @@ import org.springframework.http.ResponseEntity;
 import tech.shubhamthe.snippetsharingplatform.SnippetSharingPlatformApplication;
 import tech.shubhamthe.snippetsharingplatform.structure.Code;
 
-public class GetApiMethods extends SnippetSharingPlatformApplication {
+/**
+ * This  class add functionality to all the get api requests
+ * all the requests  are made by communicating class which acts as a bridge for  outside  package classes
+ *
+ * */
+class GetApiMethods extends SnippetSharingPlatformApplication {
 
     protected ResponseEntity<String> getApiCodeNth(String uuidRequested) {
 
@@ -21,6 +26,7 @@ public class GetApiMethods extends SnippetSharingPlatformApplication {
 
 
     protected ResponseEntity<String> getApiRandomLatest(){
+        // Check if  storage is empty if ye return 404  and a message
         if(uuid.size() == 0) {
             return ResponseEntity.badRequest()
                     .header("Content-Type", "text/html")
@@ -29,6 +35,7 @@ public class GetApiMethods extends SnippetSharingPlatformApplication {
 
         StringBuilder returnable = new StringBuilder("");
         int itr = 0;
+        // Else iterate  and return 10 snippets in api form
         for(Code snip : uuid.values()) {
             if (itr < 10) {
                 returnable.append(getApiN(snip.getName(), snip.getGenre(), snip.getCode(), snip.getDate()));
@@ -47,7 +54,7 @@ public class GetApiMethods extends SnippetSharingPlatformApplication {
 
 
 
-
+    // This method is responsible for clean formatting of message that would be sent in response to request made
     private String getApiN(String authorName, String genre, String snippet, String date) {
         return String.format("\n   {\n" +
                 "        \"author\": \"%s\",\n" +
